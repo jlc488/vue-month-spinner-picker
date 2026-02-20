@@ -1,35 +1,35 @@
 # vue-month-spinner-picker
 
-[🇰🇷 한국어](./README.ko.md)
+[🇺🇸 English](./README.md)
 
-iOS-style drum-roll spinner month picker for Vue 3.
+Vue 3용 iOS 스타일 드럼롤 스피너 월 선택기
 
 ![Vue 3](https://img.shields.io/badge/Vue-3.3+-4FC08D?logo=vue.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
-A mobile-friendly month picker component with smooth inertia scrolling, bottom sheet modal, and full i18n support. Zero dependencies beyond Vue 3.
+관성 스크롤이 적용된 모바일 친화적 월 선택 컴포넌트입니다. 바텀시트 모달, 다국어 지원, Vue 3 외 의존성 없음.
 
-[📺 Live Demo](https://jlc488.github.io/vue-month-spinner-picker/)
+[📺 라이브 데모](https://jlc488.github.io/vue-month-spinner-picker/)
 
-## Features
+## 특징
 
-- 🎰 iOS-style drum-roll spinner with inertia scrolling
-- 📱 Bottom sheet modal (mobile-optimized)
-- 🌍 i18n support (English, Korean, Japanese built-in)
-- 📅 Min/max month constraints
-- ♿ ARIA attributes & keyboard navigation
-- 🎨 CSS Custom Properties for theming
-- 📦 ESM + CJS + TypeScript declarations
-- 🪶 Lightweight — no dependencies beyond Vue 3
+- 🎰 관성 스크롤이 적용된 iOS 스타일 드럼롤 스피너
+- 📱 바텀시트 모달 (모바일 최적화)
+- 🌍 다국어 지원 (영어, 한국어, 일본어 기본 제공)
+- 📅 최소/최대 월 제약 설정
+- ♿ ARIA 속성 및 키보드 네비게이션
+- 🎨 CSS Custom Properties로 테마 커스터마이징
+- 📦 ESM + CJS + TypeScript 선언 파일
+- 🪶 경량 — Vue 3 외 의존성 없음
 
-## Installation
+## 설치
 
 ```bash
 npm install vue-month-spinner-picker
 ```
 
-## Quick Start
+## 빠른 시작
 
 ```vue
 <script setup>
@@ -41,19 +41,19 @@ const month = ref('2025-06');
 </script>
 
 <template>
-  <MonthPicker v-model="month" label="Select Month" />
+  <MonthPicker v-model="month" label="월 선택" />
 </template>
 ```
 
-## Usage
+## 사용법
 
-### Basic
+### 기본 사용
 
 ```vue
 <MonthPicker v-model="month" />
 ```
 
-### With constraints
+### 범위 제약
 
 ```vue
 <MonthPicker
@@ -64,7 +64,7 @@ const month = ref('2025-06');
 />
 ```
 
-### With locale
+### 한국어 로케일
 
 ```vue
 <script setup>
@@ -76,7 +76,7 @@ import { MonthPicker, ko } from 'vue-month-spinner-picker';
 </template>
 ```
 
-### Custom locale
+### 커스텀 로케일
 
 ```vue
 <script setup>
@@ -96,30 +96,30 @@ const zhTW = mergeLocale({
 </template>
 ```
 
-### Custom trigger
+### 커스텀 트리거
 
 ```vue
 <MonthPicker v-model="month">
   <template #trigger="{ open, displayText }">
     <button @click="open">
-      {{ displayText || 'Pick a month' }}
+      {{ displayText || '월을 선택하세요' }}
     </button>
   </template>
 </MonthPicker>
 ```
 
 
-### Validation & error state
+### 유효성 검사 및 에러 상태
 
 ```vue
 <MonthPicker
   v-model="month"
   required
-  error-message="Month is required"
+  error-message="월을 선택해주세요"
 />
 ```
 
-### Programmatic control
+### 프로그래밍 방식 제어
 
 ```vue
 <script setup>
@@ -134,11 +134,11 @@ function openFromCode() {
 
 <template>
   <MonthPicker ref="pickerRef" v-model="month" />
-  <button @click="openFromCode">Open Picker</button>
+  <button @click="openFromCode">피커 열기</button>
 </template>
 ```
 
-### Global registration (Vue plugin)
+### 전역 등록 (Vue 플러그인)
 
 ```ts
 import { createApp } from 'vue';
@@ -146,45 +146,45 @@ import { MonthPickerPlugin } from 'vue-month-spinner-picker';
 import 'vue-month-spinner-picker/style.css';
 
 const app = createApp(App);
-app.use(MonthPickerPlugin); // registers <MonthPicker> globally
+app.use(MonthPickerPlugin); // <MonthPicker>를 전역 컴포넌트로 등록
 app.mount('#app');
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `string` | — | Selected month in `YYYY-MM` format (v-model) |
-| `label` | `string` | — | Label text above the trigger |
-| `placeholder` | `string` | `'Select month'` | Placeholder when no value selected |
-| `disabled` | `boolean` | `false` | Disable the picker |
-| `required` | `boolean` | `false` | Mark as required (shows asterisk) |
-| `minMonth` | `string` | — | Minimum selectable month (`YYYY-MM`) |
-| `maxMonth` | `string` | — | Maximum selectable month (`YYYY-MM`) |
-| `yearRange` | `[number, number]` | `[now-10, now+10]` | Year range `[startYear, endYear]` |
-| `errorMessage` | `string` | — | Error message to display |
-| `locale` | `LocaleConfig` | English | Locale configuration |
-| `teleportTo` | `string` | `'body'` | Teleport target for the modal |
-| `id` | `string` | auto | HTML id for ARIA |
+| Prop | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `modelValue` | `string` | — | 선택된 월 (`YYYY-MM` 포맷, v-model) |
+| `label` | `string` | — | 트리거 위에 표시되는 라벨 |
+| `placeholder` | `string` | `'Select month'` | 값이 없을 때 표시되는 텍스트 |
+| `disabled` | `boolean` | `false` | 비활성화 |
+| `required` | `boolean` | `false` | 필수 표시 (별표) |
+| `minMonth` | `string` | — | 선택 가능한 최소 월 (`YYYY-MM`) |
+| `maxMonth` | `string` | — | 선택 가능한 최대 월 (`YYYY-MM`) |
+| `yearRange` | `[number, number]` | `[현재-10, 현재+10]` | 년도 범위 `[시작년도, 끝년도]` |
+| `errorMessage` | `string` | — | 에러 메시지 |
+| `locale` | `LocaleConfig` | 영어 | 로케일 설정 |
+| `teleportTo` | `string` | `'body'` | 모달 Teleport 대상 |
+| `id` | `string` | 자동 | ARIA용 HTML id |
 
-## Events
+## 이벤트
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `string` | Emitted on confirm (`YYYY-MM`) |
-| `change` | `string` | Emitted on confirm (`YYYY-MM`) |
-| `open` | — | Picker opened |
-| `close` | — | Picker closed |
+| 이벤트 | 페이로드 | 설명 |
+|--------|----------|------|
+| `update:modelValue` | `string` | 확인 시 발생 (`YYYY-MM`) |
+| `change` | `string` | 확인 시 발생 (`YYYY-MM`) |
+| `open` | — | 피커 열림 |
+| `close` | — | 피커 닫힘 |
 
-## Slots
+## 슬롯
 
-| Slot | Props | Description |
-|------|-------|-------------|
-| `trigger` | `{ open, value, displayText }` | Custom trigger element |
+| 슬롯 | Props | 설명 |
+|------|-------|------|
+| `trigger` | `{ open, value, displayText }` | 커스텀 트리거 요소 |
 
-## Theming
+## 테마 커스터마이징
 
-All visual aspects can be customized via CSS Custom Properties:
+CSS Custom Properties로 모든 시각적 요소를 커스터마이징할 수 있습니다:
 
 ```css
 .my-theme {
@@ -206,19 +206,19 @@ All visual aspects can be customized via CSS Custom Properties:
 }
 ```
 
-## Built-in Locales
+## 기본 제공 로케일
 
 ```ts
 import { en, ko, ja } from 'vue-month-spinner-picker';
 ```
 
-| Locale | Language |
-|--------|----------|
-| `en` | English (default) |
+| 로케일 | 언어 |
+|--------|------|
+| `en` | English (기본) |
 | `ko` | 한국어 |
 | `ja` | 日本語 |
 
-## Utility Functions
+## 유틸리티 함수
 
 ```ts
 import { parseMonthValue, formatMonthValue, isValidMonthValue } from 'vue-month-spinner-picker';
@@ -231,7 +231,7 @@ isValidMonthValue('2025-13');    // false
 
 ## TypeScript
 
-Full type definitions are included. Key types:
+모든 타입 정의가 포함되어 있습니다:
 
 ```ts
 import type {
@@ -243,10 +243,10 @@ import type {
 } from 'vue-month-spinner-picker';
 ```
 
-## Browser Support
+## 브라우저 지원
 
-Works in all modern browsers that support Vue 3. Touch and mouse input both supported.
+Vue 3를 지원하는 모든 최신 브라우저에서 동작합니다. 터치 및 마우스 입력 모두 지원.
 
-## License
+## 라이선스
 
 [MIT](./LICENSE)
