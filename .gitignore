@@ -1,0 +1,14 @@
+# Hidden files and folders
+.*
+!.gitignore
+!.github
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+demo-dist/
+
+# Logs
+*.log
