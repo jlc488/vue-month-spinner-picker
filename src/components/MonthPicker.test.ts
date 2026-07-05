@@ -293,6 +293,77 @@ describe('MonthPicker', () => {
     });
   });
 
+  describe('min/max range clamping', () => {
+    it('clamps to minMonth when confirming right after opening with out-of-range modelValue', async () => {
+      const wrapper = mount(MonthPicker, {
+        props: { modelValue: '2024-05', minMonth: '2025-03' },
+      });
+
+      await wrapper.find('.vmp-trigger').trigger('click');
+      await wrapper.vm.$nextTick();
+
+      const confirmButtons = document.querySelectorAll('.vmp-modal-btn--confirm');
+      (confirmButtons[confirmButtons.length - 1] as HTMLElement).click();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.emitted('update:modelValue')![0]).toEqual(['2025-03']);
+      wrapper.unmount();
+    });
+
+    it('clamps to maxMonth when confirming right after opening with out-of-range modelValue', async () => {
+      const wrapper = mount(MonthPicker, {
+        props: { modelValue: '2026-12', maxMonth: '2025-06' },
+      });
+
+      await wrapper.find('.vmp-trigger').trigger('click');
+      await wrapper.vm.$nextTick();
+
+      const confirmButtons = document.querySelectorAll('.vmp-modal-btn--confirm');
+      (confirmButtons[confirmButtons.length - 1] as HTMLElement).click();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.emitted('update:modelValue')![0]).toEqual(['2025-06']);
+      wrapper.unmount();
+    });
+
+    it('clamps to minMonth when opening with empty modelValue and future minMonth', async () => {
+      const wrapper = mount(MonthPicker, {
+        props: { modelValue: '', minMonth: '2999-01', yearRange: [2990, 2999] },
+      });
+
+      await wrapper.find('.vmp-trigger').trigger('click');
+      await wrapper.vm.$nextTick();
+
+      const confirmButtons = document.querySelectorAll('.vmp-modal-btn--confirm');
+      (confirmButtons[confirmButtons.length - 1] as HTMLElement).click();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.emitted('update:modelValue')![0]).toEqual(['2999-01']);
+      wrapper.unmount();
+    });
+
+    it('disables year items that have no selectable month', async () => {
+      const wrapper = mount(MonthPicker, {
+        props: {
+          modelValue: '2025-06',
+          minMonth: '2025-03',
+          maxMonth: '2026-10',
+          yearRange: [2023, 2028],
+        },
+      });
+
+      await wrapper.find('.vmp-trigger').trigger('click');
+      await wrapper.vm.$nextTick();
+
+      const columns = document.querySelectorAll('.vmp-spinner-column');
+      const yearColumn = columns[columns.length - 2]; // [year, month] of the last-opened modal
+      const disabledYears = yearColumn.querySelectorAll('.vmp-spinner-item--disabled');
+      // 2023, 2024 (before minMonth year), 2027, 2028 (after maxMonth year)
+      expect(disabledYears).toHaveLength(4);
+      wrapper.unmount();
+    });
+  });
+
   describe('custom id', () => {
     it('uses provided id for trigger button', () => {
       const wrapper = mount(MonthPicker, {

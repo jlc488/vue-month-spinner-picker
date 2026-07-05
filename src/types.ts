@@ -74,6 +74,7 @@ export interface PickerModalProps {
   title?: string;
   confirmText?: string;
   cancelText?: string;
+  teleportTo?: string;               // teleport target (default: "body")
 }
 
 export interface PickerModalEmits {

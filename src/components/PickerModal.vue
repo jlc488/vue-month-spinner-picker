@@ -7,10 +7,12 @@ const props = withDefaults(defineProps<{
   title?: string;
   confirmText?: string;
   cancelText?: string;
+  teleportTo?: string;
 }>(), {
   title: 'Select Month',
   confirmText: 'Confirm',
   cancelText: 'Cancel',
+  teleportTo: 'body',
 });
 
 const emit = defineEmits<{
@@ -46,7 +48,7 @@ function onBackdropClick() {
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport :to="teleportTo">
     <Transition name="vmp-modal">
       <div v-if="isVisible" class="vmp-modal-overlay" ref="backdropRef" @click.self="onBackdropClick">
         <div class="vmp-modal-sheet" ref="sheetRef" role="dialog" aria-modal="true" :aria-label="title">
