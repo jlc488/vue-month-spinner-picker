@@ -10,7 +10,7 @@ Vue 3용 iOS 스타일 드럼롤 스피너 월 선택기
 
 관성 스크롤이 적용된 모바일 친화적 월 선택 컴포넌트입니다. 바텀시트 모달, 다국어 지원, Vue 3 외 의존성 없음.
 
-[📺 라이브 데모](https://jlc488.github.io/vue-month-spinner-picker/)
+[📺 라이브 데모](https://jlc488.github.io/vue-month-spinner-picker/) · 온라인에서 바로 실행: [⚡ StackBlitz](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic) | [📦 CodeSandbox](https://codesandbox.io/s/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)
 
 ## 특징
 
