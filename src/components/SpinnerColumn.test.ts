@@ -220,22 +220,30 @@ describe('SpinnerColumn', () => {
     });
 
     it('ignores the click fired at the end of a drag', async () => {
+      // Fake Date so drag velocity stays below the inertia threshold and the
+      // snap emit happens synchronously on mouseup (no async rAF animation)
+      vi.useFakeTimers();
       const items = createItems(5);
       const wrapper = mount(SpinnerColumn, {
-        props: { items, modelValue: 1 },
+        props: { items, modelValue: 1, itemHeight: 40 },
       });
 
       const container = wrapper.find('.vmp-spinner-items');
-      // Simulate a drag: mousedown, large mousemove on document, mouseup
+      // Simulate a slow 40px drag: mousedown, mousemove after 1s, mouseup
       await container.trigger('mousedown', { clientY: 100 });
+      vi.advanceTimersByTime(1000);
       document.dispatchEvent(new MouseEvent('mousemove', { clientY: 60 }));
       document.dispatchEvent(new MouseEvent('mouseup'));
+      await wrapper.vm.$nextTick();
 
-      const emittedBefore = wrapper.emitted('update:modelValue')?.length ?? 0;
-      await wrapper.findAll('.vmp-spinner-item')[4].trigger('click');
-      const emittedAfter = wrapper.emitted('update:modelValue')?.length ?? 0;
+      // The drag itself snapped to item 2
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([2]);
+      const emittedBefore = wrapper.emitted('update:modelValue')!.length;
+
       // The trailing click after a drag must not add another selection
-      expect(emittedAfter).toBe(emittedBefore);
+      await wrapper.findAll('.vmp-spinner-item')[4].trigger('click');
+      expect(wrapper.emitted('update:modelValue')).toHaveLength(emittedBefore);
+      vi.useRealTimers();
     });
   });
 
