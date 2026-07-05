@@ -1,6 +1,6 @@
 {
   "name": "vue-month-spinner-picker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "iOS-style drum-roll spinner month picker for Vue 3",
   "main": "./dist/vue-month-spinner-picker.cjs.js",
@@ -47,5 +47,13 @@
     "date-picker",
     "bottom-sheet"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jlc488/vue-month-spinner-picker.git"
+  },
+  "homepage": "https://jlc488.github.io/vue-month-spinner-picker",
+  "bugs": {
+    "url": "https://github.com/jlc488/vue-month-spinner-picker/issues"
+  }
 }
