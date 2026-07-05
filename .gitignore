@@ -10,5 +10,8 @@ node_modules/
 dist/
 demo-dist/
 
+# Example playgrounds resolve fresh so they always demo the latest release
+examples/*/package-lock.json
+
 # Logs
 *.log

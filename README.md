@@ -10,7 +10,7 @@ iOS-style drum-roll spinner month picker for Vue 3.
 
 A mobile-friendly month picker component with smooth inertia scrolling, bottom sheet modal, and full i18n support. Zero dependencies beyond Vue 3.
 
-[📺 Live Demo](https://jlc488.github.io/vue-month-spinner-picker/)
+[📺 Live Demo](https://jlc488.github.io/vue-month-spinner-picker/) · Try it online: [⚡ StackBlitz](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic) | [📦 CodeSandbox](https://codesandbox.io/s/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)
 
 ## Features
 

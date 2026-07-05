@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-07-06
+
+### Added
+
+- Online playground: `examples/basic` runnable directly on StackBlitz / CodeSandbox,
+  linked from the README
+- More npm keywords and GitHub topics for discoverability
+
 ## [1.1.0] - 2026-07-05
 
 ### Added
@@ -51,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CSS Custom Properties theming
 - ESM + CJS builds with TypeScript declarations
 
+[1.1.1]: https://github.com/jlc488/vue-month-spinner-picker/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/jlc488/vue-month-spinner-picker/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/jlc488/vue-month-spinner-picker/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/jlc488/vue-month-spinner-picker/releases/tag/v1.0.0
