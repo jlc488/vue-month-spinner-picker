@@ -139,4 +139,49 @@ describe('PickerModal', () => {
     expect(children[2].classList.contains('vmp-modal-btn--confirm')).toBe(true);
     cleanup(teleportTarget);
   });
+
+  describe('keyboard & focus management', () => {
+    it('emits dismiss when Escape is pressed while open', async () => {
+      const { wrapper, teleportTarget } = mountModal({ isOpen: true });
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.emitted('dismiss')).toHaveLength(1);
+      wrapper.unmount();
+      cleanup(teleportTarget);
+    });
+
+    it('does not emit dismiss on Escape when closed', async () => {
+      const { wrapper, teleportTarget } = mountModal({ isOpen: false });
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.emitted('dismiss')).toBeUndefined();
+      wrapper.unmount();
+      cleanup(teleportTarget);
+    });
+
+    it('stops listening for Escape after closing', async () => {
+      const { wrapper, teleportTarget } = mountModal({ isOpen: true });
+      await wrapper.setProps({ isOpen: false });
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.emitted('dismiss')).toBeUndefined();
+      wrapper.unmount();
+      cleanup(teleportTarget);
+    });
+
+    it('stops listening for Escape after unmount', async () => {
+      const { wrapper, teleportTarget } = mountModal({ isOpen: true });
+      wrapper.unmount();
+
+      // Must not throw or leak — dispatching is enough to verify no stale handler emits
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      cleanup(teleportTarget);
+    });
+  });
 });

@@ -33,7 +33,7 @@ watch(selectedValue, (val) => {
   }
 });
 
-const { containerRef, currentOffset, onTouchStart, onTouchMove, onTouchEnd, onMouseDown } = useSpinner({
+const { containerRef, currentOffset, onTouchStart, onTouchMove, onTouchEnd, onMouseDown, onWheel, onItemClick } = useSpinner({
   items: itemsRef,
   selectedValue,
   itemHeight: props.itemHeight,
@@ -94,9 +94,10 @@ function onKeyDown(e: KeyboardEvent) {
       @touchmove="onTouchMove"
       @touchend="onTouchEnd"
       @mousedown="onMouseDown"
+      @wheel="onWheel"
     >
       <div
-        v-for="item in items"
+        v-for="(item, index) in items"
         :key="String(item.value)"
         class="vmp-spinner-item"
         :class="{
@@ -107,6 +108,7 @@ function onKeyDown(e: KeyboardEvent) {
         role="option"
         :aria-selected="item.value === selectedValue"
         :aria-disabled="item.disabled || undefined"
+        @click="onItemClick(index)"
       >
         {{ item.label }}
       </div>
@@ -149,7 +151,7 @@ function onKeyDown(e: KeyboardEvent) {
   font-size: var(--vmp-font-size-md, 16px);
   font-family: var(--vmp-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
   color: var(--vmp-text-primary, #1a1a1a);
-  cursor: default;
+  cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -164,6 +166,7 @@ function onKeyDown(e: KeyboardEvent) {
 .vmp-spinner-item--disabled {
   color: var(--vmp-text-secondary, #8e8e93);
   opacity: 0.4;
+  cursor: default;
 }
 
 .vmp-spinner-fade {

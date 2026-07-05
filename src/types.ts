@@ -101,6 +101,8 @@ export interface UseSpinnerReturn {
   onTouchMove: (e: TouchEvent) => void;
   onTouchEnd: (e: TouchEvent) => void;
   onMouseDown: (e: MouseEvent) => void;
+  onWheel: (e: WheelEvent) => void;
+  onItemClick: (index: number) => void;
   scrollToValue: (value: number | string) => void;
   selectedIndex: ComputedRef<number>;
 }

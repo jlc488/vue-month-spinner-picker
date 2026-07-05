@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import SpinnerColumn from './SpinnerColumn.vue';
 import type { SpinnerItem } from '../types';
@@ -196,5 +196,79 @@ describe('SpinnerColumn', () => {
 
     const column = wrapper.find('.vmp-spinner-column');
     expect(column.attributes('style')).toContain('height: 200px');
+  });
+
+  describe('tap to select', () => {
+    it('selects an item on click', async () => {
+      const items = createItems(5);
+      const wrapper = mount(SpinnerColumn, {
+        props: { items, modelValue: 1 },
+      });
+
+      await wrapper.findAll('.vmp-spinner-item')[3].trigger('click');
+      expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([4]);
+    });
+
+    it('ignores clicks on disabled items', async () => {
+      const items = createItems(5, [2]);
+      const wrapper = mount(SpinnerColumn, {
+        props: { items, modelValue: 1 },
+      });
+
+      await wrapper.findAll('.vmp-spinner-item')[2].trigger('click');
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    });
+
+    it('ignores the click fired at the end of a drag', async () => {
+      const items = createItems(5);
+      const wrapper = mount(SpinnerColumn, {
+        props: { items, modelValue: 1 },
+      });
+
+      const container = wrapper.find('.vmp-spinner-items');
+      // Simulate a drag: mousedown, large mousemove on document, mouseup
+      await container.trigger('mousedown', { clientY: 100 });
+      document.dispatchEvent(new MouseEvent('mousemove', { clientY: 60 }));
+      document.dispatchEvent(new MouseEvent('mouseup'));
+
+      const emittedBefore = wrapper.emitted('update:modelValue')?.length ?? 0;
+      await wrapper.findAll('.vmp-spinner-item')[4].trigger('click');
+      const emittedAfter = wrapper.emitted('update:modelValue')?.length ?? 0;
+      // The trailing click after a drag must not add another selection
+      expect(emittedAfter).toBe(emittedBefore);
+    });
+  });
+
+  describe('wheel scrolling', () => {
+    it('scrolls and snaps to the next item on wheel down', async () => {
+      vi.useFakeTimers();
+      const items = createItems(5);
+      const wrapper = mount(SpinnerColumn, {
+        props: { items, modelValue: 1, itemHeight: 40 },
+      });
+
+      await wrapper.find('.vmp-spinner-items').trigger('wheel', { deltaY: 40 });
+      vi.advanceTimersByTime(200);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([2]);
+      vi.useRealTimers();
+    });
+
+    it('does not scroll past the last item', async () => {
+      vi.useFakeTimers();
+      const items = createItems(3);
+      const wrapper = mount(SpinnerColumn, {
+        props: { items, modelValue: 3, itemHeight: 40 },
+      });
+
+      await wrapper.find('.vmp-spinner-items').trigger('wheel', { deltaY: 500 });
+      vi.advanceTimersByTime(200);
+      await wrapper.vm.$nextTick();
+
+      // Already at last item — no change emitted
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+      vi.useRealTimers();
+    });
   });
 });
