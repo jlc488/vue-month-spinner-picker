@@ -14,11 +14,12 @@ A mobile-friendly month picker component with smooth inertia scrolling, bottom s
 
 ## Features
 
-- 🎰 iOS-style drum-roll spinner with inertia scrolling
+- 🎰 iOS-style drum-roll spinner with inertia scrolling & rubber-band overscroll
+- 🖱️ Mouse wheel scrolling & tap-to-select (desktop-friendly)
 - 📱 Bottom sheet modal (mobile-optimized)
 - 🌍 i18n support (English, Korean, Japanese built-in)
 - 📅 Min/max month constraints
-- ♿ ARIA attributes & keyboard navigation
+- ♿ ARIA attributes, keyboard navigation, Escape to close, focus trap
 - 🎨 CSS Custom Properties for theming
 - 📦 ESM + CJS + TypeScript declarations
 - 🪶 Lightweight — no dependencies beyond Vue 3
@@ -161,7 +162,7 @@ app.mount('#app');
 | `required` | `boolean` | `false` | Mark as required (shows asterisk) |
 | `minMonth` | `string` | — | Minimum selectable month (`YYYY-MM`) |
 | `maxMonth` | `string` | — | Maximum selectable month (`YYYY-MM`) |
-| `yearRange` | `[number, number]` | `[now-10, now+10]` | Year range `[startYear, endYear]` |
+| `yearRange` | `[number, number]` | `[now-10, now+5]` | Year range `[startYear, endYear]` |
 | `errorMessage` | `string` | — | Error message to display |
 | `locale` | `LocaleConfig` | English | Locale configuration |
 | `teleportTo` | `string` | `'body'` | Teleport target for the modal |
@@ -200,9 +201,9 @@ All visual aspects can be customized via CSS Custom Properties:
   --vmp-font-size-sm: 13px;
   --vmp-font-size-md: 16px;
   --vmp-font-size-lg: 20px;
-  --vmp-backdrop-color: rgba(0, 0, 0, 0.4);
-  --vmp-highlight-bg: rgba(0, 122, 255, 0.08);
-  --vmp-highlight-border: rgba(0, 122, 255, 0.3);
+  --vmp-backdrop: rgba(0, 0, 0, 0.4);
+  --vmp-spinner-highlight-bg: rgba(0, 122, 255, 0.08);
+  --vmp-spinner-fade-color: #ffffff;
 }
 ```
 
