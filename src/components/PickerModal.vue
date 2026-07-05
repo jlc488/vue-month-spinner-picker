@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue';
+import { watch, nextTick, onUnmounted } from 'vue';
 import { useBottomSheet } from '../composables/useBottomSheet';
 
 const props = withDefaults(defineProps<{
@@ -7,10 +7,12 @@ const props = withDefaults(defineProps<{
   title?: string;
   confirmText?: string;
   cancelText?: string;
+  teleportTo?: string;
 }>(), {
   title: 'Select Month',
   confirmText: 'Confirm',
   cancelText: 'Cancel',
+  teleportTo: 'body',
 });
 
 const emit = defineEmits<{
@@ -23,14 +25,81 @@ const { sheetRef, backdropRef, isVisible, open, close } = useBottomSheet({
   onDismiss: () => emit('dismiss'),
 });
 
+// ── Keyboard handling & focus management ────────────────────
+
+let previouslyFocused: HTMLElement | null = null;
+
+function getFocusableElements(): HTMLElement[] {
+  if (!sheetRef.value) return [];
+  return Array.from(
+    sheetRef.value.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    ),
+  );
+}
+
+function onDocumentKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    e.stopPropagation();
+    emit('dismiss');
+    return;
+  }
+
+  // Cycle focus within the sheet
+  if (e.key === 'Tab') {
+    const focusables = getFocusableElements();
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (e.shiftKey) {
+      if (active === first || !sheetRef.value?.contains(active)) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (active === last || !sheetRef.value?.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
+}
+
+function activateModal() {
+  if (typeof document === 'undefined') return;
+  previouslyFocused = document.activeElement as HTMLElement | null;
+  document.addEventListener('keydown', onDocumentKeydown);
+  nextTick(() => {
+    getFocusableElements()[0]?.focus();
+  });
+}
+
+function deactivateModal() {
+  if (typeof document === 'undefined') return;
+  document.removeEventListener('keydown', onDocumentKeydown);
+  previouslyFocused?.focus?.();
+  previouslyFocused = null;
+}
+
 // Sync with isOpen prop
 watch(() => props.isOpen, (val) => {
   if (val) {
     open();
+    activateModal();
   } else {
     close();
+    deactivateModal();
   }
 }, { immediate: true });
+
+onUnmounted(() => {
+  if (typeof document !== 'undefined') {
+    document.removeEventListener('keydown', onDocumentKeydown);
+  }
+});
 
 function onConfirm() {
   emit('confirm');
@@ -46,7 +115,7 @@ function onBackdropClick() {
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport :to="teleportTo">
     <Transition name="vmp-modal">
       <div v-if="isVisible" class="vmp-modal-overlay" ref="backdropRef" @click.self="onBackdropClick">
         <div class="vmp-modal-sheet" ref="sheetRef" role="dialog" aria-modal="true" :aria-label="title">

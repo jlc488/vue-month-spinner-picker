@@ -5,6 +5,7 @@ import {
   isValidMonthValue,
   generateYearRange,
   isMonthInRange,
+  clampMonthToRange,
 } from './utils';
 
 describe('parseMonthValue', () => {
@@ -105,5 +106,31 @@ describe('isMonthInRange', () => {
   it('ignores invalid minMonth/maxMonth strings', () => {
     expect(isMonthInRange(2024, 6, 'invalid')).toBe(true);
     expect(isMonthInRange(2024, 6, undefined, 'invalid')).toBe(true);
+  });
+});
+
+describe('clampMonthToRange', () => {
+  it('returns input unchanged when in range', () => {
+    expect(clampMonthToRange(2024, 6, '2024-01', '2024-12')).toEqual({ year: 2024, month: 6 });
+    expect(clampMonthToRange(2024, 6)).toEqual({ year: 2024, month: 6 });
+  });
+
+  it('clamps to minMonth when below range', () => {
+    expect(clampMonthToRange(2023, 12, '2024-03')).toEqual({ year: 2024, month: 3 });
+    expect(clampMonthToRange(2024, 2, '2024-03')).toEqual({ year: 2024, month: 3 });
+  });
+
+  it('clamps to maxMonth when above range', () => {
+    expect(clampMonthToRange(2025, 1, undefined, '2024-10')).toEqual({ year: 2024, month: 10 });
+    expect(clampMonthToRange(2024, 11, undefined, '2024-10')).toEqual({ year: 2024, month: 10 });
+  });
+
+  it('treats boundaries as inclusive', () => {
+    expect(clampMonthToRange(2024, 3, '2024-03', '2024-10')).toEqual({ year: 2024, month: 3 });
+    expect(clampMonthToRange(2024, 10, '2024-03', '2024-10')).toEqual({ year: 2024, month: 10 });
+  });
+
+  it('ignores invalid bound strings', () => {
+    expect(clampMonthToRange(2024, 6, 'invalid', 'also-invalid')).toEqual({ year: 2024, month: 6 });
   });
 });

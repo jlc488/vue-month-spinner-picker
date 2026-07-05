@@ -73,6 +73,31 @@ export function generateYearRange(yearRange?: [number, number]): number[] {
  * - If maxMonth not provided, no upper bound.
  * - Compares as YYYYMM numeric values.
  */
+/**
+ * Clamp a year-month to the [minMonth, maxMonth] range.
+ * Returns the nearest boundary when out of range, otherwise the input unchanged.
+ */
+export function clampMonthToRange(
+  year: number,
+  month: number,
+  minMonth?: string,
+  maxMonth?: string,
+): { year: number; month: number } {
+  const val = year * 100 + month;
+
+  const minParsed = minMonth ? parseMonthValue(minMonth) : null;
+  if (minParsed && val < minParsed.year * 100 + minParsed.month) {
+    return { year: minParsed.year, month: minParsed.month };
+  }
+
+  const maxParsed = maxMonth ? parseMonthValue(maxMonth) : null;
+  if (maxParsed && val > maxParsed.year * 100 + maxParsed.month) {
+    return { year: maxParsed.year, month: maxParsed.month };
+  }
+
+  return { year, month };
+}
+
 export function isMonthInRange(
   year: number,
   month: number,

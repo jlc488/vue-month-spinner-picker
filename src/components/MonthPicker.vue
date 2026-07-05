@@ -3,7 +3,7 @@ import { ref, computed, watch } from 'vue';
 import SpinnerColumn from './SpinnerColumn.vue';
 import PickerModal from './PickerModal.vue';
 import { mergeLocale } from '../locales';
-import { parseMonthValue, formatMonthValue, isValidMonthValue, generateYearRange, isMonthInRange } from '../utils';
+import { parseMonthValue, formatMonthValue, isValidMonthValue, generateYearRange, isMonthInRange, clampMonthToRange } from '../utils';
 import type { LocaleConfig, SpinnerItem } from '../types';
 
 const props = withDefaults(defineProps<{
@@ -47,12 +47,15 @@ const isModalOpen = ref(false);
 const tempYear = ref(new Date().getFullYear());
 const tempMonth = ref(new Date().getMonth() + 1);
 
-// Year items for spinner
+// Year items for spinner (disabled when no month of the year is selectable)
 const yearItems = computed<SpinnerItem[]>(() => {
   const years = generateYearRange(props.yearRange);
   return years.map(y => ({
     value: y,
     label: resolvedLocale.value.yearSuffix ? `${y}${resolvedLocale.value.yearSuffix}` : String(y),
+    disabled:
+      !isMonthInRange(y, 12, props.minMonth, undefined) ||
+      !isMonthInRange(y, 1, undefined, props.maxMonth),
   }));
 });
 
@@ -98,6 +101,12 @@ function openPicker() {
     tempMonth.value = now.getMonth() + 1;
   }
 
+  // Clamp initial position into [minMonth, maxMonth] so the picker
+  // never opens on (and can never confirm) a disabled month
+  const clamped = clampMonthToRange(tempYear.value, tempMonth.value, props.minMonth, props.maxMonth);
+  tempYear.value = clamped.year;
+  tempMonth.value = clamped.month;
+
   isModalOpen.value = true;
   emit('open');
 }
@@ -110,7 +119,9 @@ function closePicker() {
 
 // Confirm selection
 function onConfirm() {
-  const value = formatMonthValue(tempYear.value, tempMonth.value);
+  // Final guard: never emit a value outside [minMonth, maxMonth]
+  const clamped = clampMonthToRange(tempYear.value, tempMonth.value, props.minMonth, props.maxMonth);
+  const value = formatMonthValue(clamped.year, clamped.month);
   emit('update:modelValue', value);
   emit('change', value);
   closePicker();
@@ -190,6 +201,7 @@ defineExpose({
     <!-- Picker Modal -->
     <PickerModal
       :is-open="isModalOpen"
+      :teleport-to="teleportTo"
       :title="resolvedLocale.title"
       :confirm-text="resolvedLocale.confirmText"
       :cancel-text="resolvedLocale.cancelText"

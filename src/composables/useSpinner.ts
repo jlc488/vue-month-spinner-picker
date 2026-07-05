@@ -9,12 +9,16 @@ export function useSpinner(options: UseSpinnerOptions): UseSpinnerReturn {
 
   // Drag state (non-reactive for performance)
   let isDragging = false;
+  let didDrag = false;
   let startY = 0;
   let startOffset = 0;
   let lastY = 0;
   let lastTime = 0;
   let velocity = 0;
   let animationId: number | null = null;
+  let wheelSnapTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const DRAG_THRESHOLD = 5; // px of movement before a press counts as a drag, not a tap
 
   // Selected index derived from current offset
   const selectedIndex = computed(() => {
@@ -82,6 +86,17 @@ export function useSpinner(options: UseSpinnerOptions): UseSpinnerReturn {
   }
 
   /**
+   * Apply iOS-style rubber-band resistance when dragging past the bounds.
+   */
+  function applyDragResistance(offset: number): number {
+    const maxOffset = 0;
+    const minOffset = -(items.value.length - 1) * itemHeight;
+    if (offset > maxOffset) return maxOffset + (offset - maxOffset) * 0.3;
+    if (offset < minOffset) return minOffset + (offset - minOffset) * 0.3;
+    return offset;
+  }
+
+  /**
    * Start inertia scroll animation after drag ends.
    * Uses friction-based deceleration and snaps when velocity is low enough.
    */
@@ -118,6 +133,7 @@ export function useSpinner(options: UseSpinnerOptions): UseSpinnerReturn {
   function onTouchStart(e: TouchEvent) {
     cancelAnimation();
     isDragging = true;
+    didDrag = false;
     startY = e.touches[0].clientY;
     startOffset = currentOffset.value;
     lastY = startY;
@@ -137,9 +153,13 @@ export function useSpinner(options: UseSpinnerOptions): UseSpinnerReturn {
       velocity = ((y - lastY) / dt) * 16; // normalize to ~60fps frame
     }
 
+    if (Math.abs(y - startY) > DRAG_THRESHOLD) {
+      didDrag = true;
+    }
+
     lastY = y;
     lastTime = now;
-    currentOffset.value = startOffset + (y - startY);
+    currentOffset.value = applyDragResistance(startOffset + (y - startY));
   }
 
   function onTouchEnd() {
@@ -155,46 +175,87 @@ export function useSpinner(options: UseSpinnerOptions): UseSpinnerReturn {
 
   // ── Mouse handlers ──────────────────────────────────────────
 
+  const onDocMouseMove = (ev: MouseEvent) => {
+    if (!isDragging) return;
+    ev.preventDefault();
+
+    const y = ev.clientY;
+    const now = Date.now();
+    const dt = now - lastTime;
+
+    if (dt > 0) {
+      velocity = ((y - lastY) / dt) * 16;
+    }
+
+    if (Math.abs(y - startY) > DRAG_THRESHOLD) {
+      didDrag = true;
+    }
+
+    lastY = y;
+    lastTime = now;
+    currentOffset.value = applyDragResistance(startOffset + (y - startY));
+  };
+
+  const onDocMouseUp = () => {
+    isDragging = false;
+    removeDocMouseListeners();
+
+    if (Math.abs(velocity) > 1) {
+      startInertia();
+    } else {
+      snapToNearest();
+    }
+  };
+
+  function removeDocMouseListeners() {
+    document.removeEventListener('mousemove', onDocMouseMove);
+    document.removeEventListener('mouseup', onDocMouseUp);
+  }
+
   function onMouseDown(e: MouseEvent) {
     cancelAnimation();
     isDragging = true;
+    didDrag = false;
     startY = e.clientY;
     startOffset = currentOffset.value;
     lastY = startY;
     lastTime = Date.now();
     velocity = 0;
 
-    const onMouseMove = (ev: MouseEvent) => {
-      if (!isDragging) return;
-      ev.preventDefault();
+    document.addEventListener('mousemove', onDocMouseMove);
+    document.addEventListener('mouseup', onDocMouseUp);
+  }
 
-      const y = ev.clientY;
-      const now = Date.now();
-      const dt = now - lastTime;
+  // ── Wheel handler ───────────────────────────────────────────
 
-      if (dt > 0) {
-        velocity = ((y - lastY) / dt) * 16;
-      }
+  function onWheel(e: WheelEvent) {
+    e.preventDefault();
+    cancelAnimation();
 
-      lastY = y;
-      lastTime = now;
-      currentOffset.value = startOffset + (y - startY);
-    };
+    currentOffset.value = clampOffset(currentOffset.value - e.deltaY);
 
-    const onMouseUp = () => {
-      isDragging = false;
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+    // Snap once wheel input goes quiet
+    if (wheelSnapTimer !== null) clearTimeout(wheelSnapTimer);
+    wheelSnapTimer = setTimeout(() => {
+      wheelSnapTimer = null;
+      snapToNearest();
+    }, 150);
+  }
 
-      if (Math.abs(velocity) > 1) {
-        startInertia();
-      } else {
-        snapToNearest();
-      }
-    };
+  // ── Tap-to-select ───────────────────────────────────────────
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+  function onItemClick(index: number) {
+    // Ignore the click that fires at the end of a drag
+    if (didDrag) return;
+
+    const item = items.value[index];
+    if (!item || item.disabled) return;
+
+    cancelAnimation();
+    currentOffset.value = -index * itemHeight;
+    if (item.value !== selectedValue.value) {
+      selectedValue.value = item.value;
+    }
   }
 
   // ── Watchers ────────────────────────────────────────────────
@@ -213,9 +274,16 @@ export function useSpinner(options: UseSpinnerOptions): UseSpinnerReturn {
     { immediate: true },
   );
 
-  // Cleanup animation on unmount
+  // Cleanup on unmount (animation, pending snap, in-flight mouse drag)
   onUnmounted(() => {
     cancelAnimation();
+    if (wheelSnapTimer !== null) {
+      clearTimeout(wheelSnapTimer);
+      wheelSnapTimer = null;
+    }
+    if (typeof document !== 'undefined') {
+      removeDocMouseListeners();
+    }
   });
 
   return {
@@ -225,6 +293,8 @@ export function useSpinner(options: UseSpinnerOptions): UseSpinnerReturn {
     onTouchMove,
     onTouchEnd,
     onMouseDown,
+    onWheel,
+    onItemClick,
     scrollToValue,
     selectedIndex,
   };
