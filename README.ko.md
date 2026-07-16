@@ -13,7 +13,7 @@ Vue 3용 iOS 스타일 드럼롤 스피너 월 선택기
 [📺 라이브 데모](https://jlc488.github.io/vue-month-spinner-picker/) · 온라인에서 바로 실행: [⚡ StackBlitz](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic) | [📦 CodeSandbox](https://codesandbox.io/s/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/jlc488/vue-month-spinner-picker/main/docs/screenshot.png" alt="vue-month-spinner-picker — 연/월 드럼롤 스피너가 있는 바텀시트" width="400" />
+  <img src="https://raw.githubusercontent.com/jlc488/vue-month-spinner-picker/main/docs/demo.gif" alt="vue-month-spinner-picker 데모 — 바텀시트가 열리고 연/월 드럼롤 스피너가 관성 스크롤되는 모습" width="390" />
 </p>
 
 ## 특징

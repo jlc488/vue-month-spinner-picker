@@ -13,7 +13,7 @@ A mobile-friendly month picker component with smooth inertia scrolling, bottom s
 [📺 Live Demo](https://jlc488.github.io/vue-month-spinner-picker/) · Try it online: [⚡ StackBlitz](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic) | [📦 CodeSandbox](https://codesandbox.io/s/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/jlc488/vue-month-spinner-picker/main/docs/screenshot.png" alt="vue-month-spinner-picker — bottom sheet with year/month drum-roll spinners" width="400" />
+  <img src="https://raw.githubusercontent.com/jlc488/vue-month-spinner-picker/main/docs/demo.gif" alt="vue-month-spinner-picker demo — bottom sheet opens and year/month drum-roll spinners scroll with inertia" width="390" />
 </p>
 
 ## Features
