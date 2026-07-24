@@ -1,16 +1,15 @@
 # vue-month-spinner-picker
 
-[🇰🇷 한국어](./README.ko.md)
-
-iOS-style drum-roll spinner month picker for Vue 3.
-
+[![npm](https://img.shields.io/npm/v/vue-month-spinner-picker)](https://www.npmjs.com/package/vue-month-spinner-picker)
+[![CI](https://github.com/jlc488/vue-month-spinner-picker/actions/workflows/ci.yml/badge.svg)](https://github.com/jlc488/vue-month-spinner-picker/actions/workflows/ci.yml)
 ![Vue 3](https://img.shields.io/badge/Vue-3.3+-4FC08D?logo=vue.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-blue)
+[![License](https://img.shields.io/badge/License-MIT-blue)](./LICENSE)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz_small.svg)](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)
 
-A mobile-friendly month picker component with smooth inertia scrolling, bottom sheet modal, and full i18n support. Zero dependencies beyond Vue 3.
+**[Live demo](https://jlc488.github.io/vue-month-spinner-picker/)** · **[Edit on StackBlitz](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)** · **[CodeSandbox](https://codesandbox.io/s/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)** · [🇰🇷 한국어](./README.ko.md)
 
-[📺 Live Demo](https://jlc488.github.io/vue-month-spinner-picker/) · Try it online: [⚡ StackBlitz](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic) | [📦 CodeSandbox](https://codesandbox.io/s/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)
+iOS-style drum-roll spinner month picker for Vue 3. A mobile-friendly month picker component with smooth inertia scrolling, bottom sheet modal, and full i18n support. Zero dependencies beyond Vue 3.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/jlc488/vue-month-spinner-picker/main/docs/demo.gif" alt="vue-month-spinner-picker demo — bottom sheet opens and year/month drum-roll spinners scroll with inertia" width="390" />
