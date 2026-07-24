@@ -1,16 +1,15 @@
 # vue-month-spinner-picker
 
-[🇺🇸 English](./README.md)
-
-Vue 3용 iOS 스타일 드럼롤 스피너 월 선택기
-
+[![npm](https://img.shields.io/npm/v/vue-month-spinner-picker)](https://www.npmjs.com/package/vue-month-spinner-picker)
+[![CI](https://github.com/jlc488/vue-month-spinner-picker/actions/workflows/ci.yml/badge.svg)](https://github.com/jlc488/vue-month-spinner-picker/actions/workflows/ci.yml)
 ![Vue 3](https://img.shields.io/badge/Vue-3.3+-4FC08D?logo=vue.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-blue)
+[![License](https://img.shields.io/badge/License-MIT-blue)](./LICENSE)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz_small.svg)](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)
 
-관성 스크롤이 적용된 모바일 친화적 월 선택 컴포넌트입니다. 바텀시트 모달, 다국어 지원, Vue 3 외 의존성 없음.
+**[라이브 데모](https://jlc488.github.io/vue-month-spinner-picker/)** · **[StackBlitz에서 편집](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)** · **[CodeSandbox](https://codesandbox.io/s/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)** · [🇺🇸 English](./README.md)
 
-[📺 라이브 데모](https://jlc488.github.io/vue-month-spinner-picker/) · 온라인에서 바로 실행: [⚡ StackBlitz](https://stackblitz.com/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic) | [📦 CodeSandbox](https://codesandbox.io/s/github/jlc488/vue-month-spinner-picker/tree/main/examples/basic)
+Vue 3용 iOS 스타일 드럼롤 스피너 월 선택기. 관성 스크롤이 적용된 모바일 친화적 월 선택 컴포넌트입니다. 바텀시트 모달, 다국어 지원, Vue 3 외 의존성 없음.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/jlc488/vue-month-spinner-picker/main/docs/demo.gif" alt="vue-month-spinner-picker 데모 — 바텀시트가 열리고 연/월 드럼롤 스피너가 관성 스크롤되는 모습" width="390" />
