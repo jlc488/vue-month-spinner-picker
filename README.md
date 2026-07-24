@@ -252,6 +252,10 @@ import type {
 
 Works in all modern browsers that support Vue 3. Touch and mouse input both supported.
 
+## Family
+
+- [@devslab/vue-date-rail](https://github.com/devslab-kr/vue-date-rail) — horizontal infinite-scroll date rail (day / month strip) picker; its `<MonthRail>` is the inline sibling of this bottom-sheet spinner ([live demo](https://devslab-kr.github.io/vue-date-rail/))
+
 ## Contributing
 
 Bug reports, feature requests, and pull requests are welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md) for the development setup and PR guidelines.
