@@ -252,6 +252,10 @@ import type {
 
 Vue 3를 지원하는 모든 최신 브라우저에서 동작합니다. 터치 및 마우스 입력 모두 지원.
 
+## Family
+
+- [@devslab/vue-date-rail](https://github.com/devslab-kr/vue-date-rail) — 가로 무한 스크롤 날짜 레일(일/월 스트립) 피커. 그 안의 `<MonthRail>`이 이 바텀시트 스피너의 인라인 형제입니다 ([라이브 데모](https://devslab-kr.github.io/vue-date-rail/))
+
 ## 기여하기
 
 버그 리포트, 기능 제안, PR 모두 환영합니다 — 개발 환경 설정과 PR 가이드는 [CONTRIBUTING.md](./CONTRIBUTING.md)를 참고하세요.
