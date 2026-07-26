@@ -37,3 +37,29 @@ npm ci
 - Match the existing code style (Vue 3 `<script setup>` + TypeScript, Composition API).
 - Keep the library dependency-free — new runtime dependencies will not be accepted.
 - Public API changes should update the README (both `README.md` and `README.ko.md`), types, and CHANGELOG.
+
+## Releasing (maintainers)
+
+Releases are automated by [`.github/workflows/release.yml`](.github/workflows/release.yml).
+Pushing a version tag publishes to npm and creates the GitHub Release:
+
+```bash
+# 1. On main, with package.json bumped and CHANGELOG.md updated:
+git tag v1.3.0
+git push origin v1.3.0
+```
+
+The workflow then:
+
+1. Fails fast if the tag does not match `package.json`'s version, so npm and
+   GitHub cannot drift apart.
+2. Runs the full test suite and all three builds.
+3. Publishes to npm via **Trusted Publishing (OIDC)** — there is no `NPM_TOKEN`
+   secret and no OTP prompt. Skipped if that version is already on npm, so
+   re-running is safe.
+4. Creates the GitHub Release using the matching `## [x.y.z]` section of
+   `CHANGELOG.md` as the release notes.
+
+The npm-side trust relationship is bound to this repository **and** the workflow
+filename `release.yml`. Renaming the file breaks publishing until the trusted
+publisher config on npmjs.com is updated to match.
