@@ -1,0 +1,117 @@
+name: Release
+
+# Publishing is driven entirely by a version tag:
+#
+#   git tag v1.3.0 && git push origin v1.3.0
+#
+# npm authentication uses Trusted Publishing (OIDC) — there is no NPM_TOKEN
+# secret to rotate, and no OTP prompt. The trust relationship is configured on
+# npmjs.com against this repository AND this filename (release.yml), so renaming
+# this file breaks publishing until the npm-side config is updated to match.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing version tag to (re-)release, e.g. v1.2.0'
+        required: true
+
+permissions:
+  contents: write # create the GitHub Release
+  id-token: write # mint the OIDC token npm exchanges for publish rights
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm >= 11.5.1; the version bundled with Node 24
+      # is not guaranteed to be new enough.
+      - name: Ensure npm supports OIDC
+        run: |
+          npm install -g npm@latest
+          npm --version
+
+      - name: Resolve version from tag
+        id: version
+        run: |
+          tag="${{ inputs.tag || github.ref_name }}"
+          version="${tag#v}"
+          pkg="$(node -p "require('./package.json').version")"
+
+          if [ "$version" != "$pkg" ]; then
+            echo "::error::Tag $tag does not match package.json version $pkg." \
+                 "Bump package.json and re-tag so npm and GitHub cannot drift apart."
+            exit 1
+          fi
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - run: npm ci
+
+      # Fail before attempting a publish rather than from inside prepublishOnly,
+      # so a red run points at the actual broken step.
+      - run: npm run test:run
+      - run: npm run build
+      - run: npm run build:types
+
+      - name: Check whether this version is already on npm
+        id: published
+        run: |
+          name="$(node -p "require('./package.json').name")"
+          if npm view "$name@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$name@${{ steps.version.outputs.version }} is already published — skipping npm publish."
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # No --provenance flag: trusted publishing attaches provenance by default.
+      - name: Publish to npm
+        if: steps.published.outputs.already == 'false'
+        run: npm publish
+
+      - name: Extract release notes from CHANGELOG
+        run: |
+          # index(...) == 1 instead of a regex: the section headers contain [ and
+          # ], and escaping those through YAML -> bash -> awk is easy to get
+          # silently wrong (a bad escape turns "[1.2.0]" into a character class
+          # that matches nothing).
+          awk -v ver="${{ steps.version.outputs.version }}" '
+            index($0, "## [" ver "]") == 1 { flag = 1; next }
+            flag && index($0, "## [") == 1 { exit }
+            flag { print }
+          ' CHANGELOG.md > release-notes.md
+
+          if [ ! -s release-notes.md ]; then
+            echo "::error::No '## [${{ steps.version.outputs.version }}]' section found in CHANGELOG.md."
+            exit 1
+          fi
+          cat release-notes.md
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${{ steps.version.outputs.tag }}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --notes-file release-notes.md
+          else
+            gh release create "$tag" --title "$tag" --notes-file release-notes.md
+          fi
