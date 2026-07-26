@@ -121,7 +121,8 @@ function onKeyDown(e: KeyboardEvent) {
   </div>
 </template>
 
-<style scoped>
+<!-- Global, not scoped — see the note in MonthPicker.vue -->
+<style>
 .vmp-spinner-column {
   position: relative;
   overflow: hidden;

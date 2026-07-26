@@ -1,0 +1,21 @@
+/**
+ * Opt-in dark theme. Apply the attribute on an ancestor of the picker:
+ *
+ *   <html data-vmp-theme="dark">
+ *
+ * Put it on <html> or <body> rather than your app root: the picker modal is
+ * teleported to `body` by default, so an attribute on `#app` would not reach
+ * it. Every value is a plain CSS Custom Property — override any of them after
+ * importing style.css to adjust the palette.
+ */
+[data-vmp-theme='dark'] {
+  --vmp-primary: #0a84ff;
+  --vmp-background: #1c1c1e;
+  --vmp-surface: #2c2c2e;
+  --vmp-text-primary: #f2f2f7;
+  --vmp-text-secondary: #98989f;
+  --vmp-border: #3a3a3c;
+  --vmp-error: #ff453a;
+  --vmp-backdrop: rgba(0, 0, 0, 0.6);
+  --vmp-spinner-highlight-bg: rgba(10, 132, 255, 0.18);
+}

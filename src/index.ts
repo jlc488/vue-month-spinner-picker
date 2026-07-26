@@ -1,4 +1,5 @@
 import type { App } from 'vue';
+import './theme-dark.css';
 import MonthPicker from './components/MonthPicker.vue';
 import SpinnerColumn from './components/SpinnerColumn.vue';
 import PickerModal from './components/PickerModal.vue';

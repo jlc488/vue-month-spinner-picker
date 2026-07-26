@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-26
+
+### Added
+
+- Opt-in dark theme, shipped inside `style.css` and activated with
+  `data-vmp-theme="dark"` on `<html>` / `<body>` (the modal is teleported to
+  `body`, so the attribute has to sit above it)
+- `visibleCount` and `itemHeight` props on `MonthPicker`, forwarded to both
+  spinner columns — previously only reachable by using `SpinnerColumn` directly
+- README section on overriding styles, plus SSR / Nuxt notes
+
+### Changed
+
+- **Component styles are no longer `scoped`.** Encapsulation already came from
+  the `vmp-` class prefix, while `scoped` appended a build-generated
+  `[data-v-hash]` to every selector. That pushed each rule above single-class
+  specificity, so the published class names could not be overridden without
+  `!important` — and the hash itself changed between releases, so it could not
+  be targeted either. Selectors are now plain single classes.
+
+  If you already override library styles, note that equal specificity is decided
+  by source order: import `style.css` **before** your own stylesheet.
+
+### Fixed
+
+- **SSR hydration mismatch**: the auto-generated ARIA id came from
+  `Math.random()`, producing a different value on the server than on the client.
+  It now uses Vue's `useId()` on Vue 3.5+ (app-scoped and SSR-safe), falling
+  back to a module counter on Vue 3.3/3.4
+
 ## [1.1.2] - 2026-07-17
 
 ### Changed

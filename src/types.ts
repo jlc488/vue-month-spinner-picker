@@ -30,6 +30,8 @@ export interface MonthPickerProps {
   locale?: LocaleConfig;
   teleportTo?: string;             // modal teleport target (default: "body")
   id?: string;
+  visibleCount?: number;           // visible rows per spinner column (default: 5)
+  itemHeight?: number;             // spinner row height in px (default: 40)
 }
 
 export interface MonthPickerEmits {

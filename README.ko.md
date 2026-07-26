@@ -23,7 +23,9 @@ Vue 3용 iOS 스타일 드럼롤 스피너 월 선택기. 관성 스크롤이 �
 - 🌍 다국어 지원 (영어, 한국어, 일본어 기본 제공)
 - 📅 최소/최대 월 제약 설정
 - ♿ ARIA 속성, 키보드 네비게이션, Escape로 닫기, 포커스 트랩
-- 🎨 CSS Custom Properties로 테마 커스터마이징
+- 🎨 CSS Custom Properties로 테마 커스터마이징 + 다크 테마 (opt-in)
+- 🎯 스타일 오버라이드 가능 — 전역 `vmp-` 클래스, `!important` 불필요
+- 🖥️ SSR 안전 (Nuxt) — 하이드레이션 불일치 없음
 - 📦 ESM + CJS + TypeScript 선언 파일
 - 🪶 경량 — Vue 3 외 의존성 없음
 
@@ -170,6 +172,8 @@ app.mount('#app');
 | `locale` | `LocaleConfig` | 영어 | 로케일 설정 |
 | `teleportTo` | `string` | `'body'` | 모달 Teleport 대상 |
 | `id` | `string` | 자동 | ARIA용 HTML id |
+| `visibleCount` | `number` | `5` | 스피너 컬럼에 보이는 행 수 |
+| `itemHeight` | `number` | `40` | 스피너 행 높이 (px) |
 
 ## 이벤트
 
@@ -209,6 +213,63 @@ CSS Custom Properties로 모든 시각적 요소를 커스터마이징할 수 �
   --vmp-spinner-fade-color: #ffffff;
 }
 ```
+
+### 다크 테마
+
+다크 팔레트는 `style.css`에 함께 들어 있고, `data-vmp-theme` 속성으로 켭니다.
+이 속성은 앱 루트가 아니라 **`<html>` 또는 `<body>`에** 붙여야 합니다 — 모달이
+`body`로 teleport되므로 `#app`에 붙인 속성은 모달까지 도달하지 않습니다.
+
+```html
+<html data-vmp-theme="dark">
+```
+
+```ts
+// 런타임 토글
+document.documentElement.dataset.vmpTheme = isDark ? 'dark' : '';
+```
+
+팔레트를 조정하려면 `style.css` import 뒤에서 변수를 덮어쓰면 됩니다:
+
+```css
+[data-vmp-theme='dark'] {
+  --vmp-primary: #a78bfa;
+}
+```
+
+### 스타일 오버라이드
+
+컴포넌트 스타일은 **scoped가 아니라 전역**입니다. 모든 클래스가 `vmp-`
+프리픽스이고 명시도가 클래스 1개이므로, 클래스 2개짜리 셀렉터면 `!important`
+없이 이깁니다:
+
+```css
+.my-picker .vmp-trigger {
+  border-radius: 999px;
+}
+```
+
+`style.css`를 본인 스타일시트보다 **먼저** import하세요 — 명시도가 같을 때는
+나중에 선언된 쪽이 이깁니다. Tailwind를 쓴다면, 유틸리티는 `@layer utilities`에
+있어서 순서와 무관하게 레이어 없는 CSS에 지므로 important modifier
+(`!rounded-full`)를 쓰거나 `--vmp-*` 변수를 직접 지정하세요:
+
+```html
+<MonthPicker v-model="month" class="[--vmp-primary:#6366f1]" />
+```
+
+### 스피너 치수
+
+```vue
+<MonthPicker v-model="month" :visible-count="3" :item-height="32" />
+```
+
+## SSR / Nuxt
+
+별도 설정 없이 서버 렌더링됩니다. 자동 생성되는 ARIA id는 Vue 3.5+에서 Vue의
+`useId()`를 사용하므로 서버 렌더 결과와 클라이언트 하이드레이션이 일치합니다.
+Vue 3.3/3.4에서는 모듈 카운터로 대체되므로, 해당 버전에서 장시간 구동되는 Node
+프로세스로 SSR을 서비스한다면 `id`를 명시적으로 넘기세요.
 
 ## 기본 제공 로케일
 
