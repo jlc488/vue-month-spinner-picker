@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import SpinnerColumn from './SpinnerColumn.vue';
 import PickerModal from './PickerModal.vue';
+import { useComponentId } from '../composables/useComponentId';
 import { mergeLocale } from '../locales';
 import { parseMonthValue, formatMonthValue, isValidMonthValue, generateYearRange, isMonthInRange, clampMonthToRange } from '../utils';
 import type { LocaleConfig, SpinnerItem } from '../types';
@@ -19,6 +20,8 @@ const props = withDefaults(defineProps<{
   locale?: LocaleConfig;
   teleportTo?: string;
   id?: string;
+  visibleCount?: number;
+  itemHeight?: number;
 }>(), {
   placeholder: 'Select month',
   disabled: false,
@@ -33,8 +36,9 @@ const emit = defineEmits<{
   'close': [];
 }>();
 
-// Generate unique ID for ARIA
-const componentId = computed(() => props.id || `vmp-${Math.random().toString(36).slice(2, 9)}`);
+// Generate unique ID for ARIA (stable across SSR render and hydration)
+const autoId = useComponentId();
+const componentId = computed(() => props.id || autoId);
 const errorId = computed(() => `${componentId.value}-error`);
 
 // Locale
@@ -212,16 +216,27 @@ defineExpose({
       <SpinnerColumn
         :items="yearItems"
         v-model="tempYear"
+        :visible-count="visibleCount"
+        :item-height="itemHeight"
       />
       <SpinnerColumn
         :items="monthItems"
         v-model="tempMonth"
+        :visible-count="visibleCount"
+        :item-height="itemHeight"
       />
     </PickerModal>
   </div>
 </template>
 
-<style scoped>
+<!--
+  Styles are intentionally global, not scoped. Every class is `vmp-`-prefixed,
+  so naming already provides the encapsulation `scoped` would give — while
+  `scoped` would add a build-generated [data-v-hash] to every selector, raising
+  specificity above any single-class override and making the published class
+  names impossible to target reliably.
+-->
+<style>
 .vmp-month-picker {
   display: inline-flex;
   flex-direction: column;

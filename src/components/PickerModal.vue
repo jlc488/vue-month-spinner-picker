@@ -140,7 +140,8 @@ function onBackdropClick() {
   </Teleport>
 </template>
 
-<style scoped>
+<!-- Global, not scoped — see the note in MonthPicker.vue -->
+<style>
 .vmp-modal-overlay {
   position: fixed;
   inset: 0;

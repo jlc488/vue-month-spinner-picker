@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { h } from 'vue';
 import MonthPicker from './MonthPicker.vue';
 
 describe('MonthPicker', () => {
@@ -379,6 +380,74 @@ describe('MonthPicker', () => {
       });
 
       expect(wrapper.find('.vmp-label').attributes('for')).toBe('my-picker');
+    });
+
+    it('auto-generated id links label to trigger', () => {
+      const wrapper = mount(MonthPicker, {
+        props: { modelValue: '', label: 'Month' },
+      });
+
+      const generated = wrapper.find('.vmp-trigger').attributes('id');
+      expect(generated).toBeTruthy();
+      expect(wrapper.find('.vmp-label').attributes('for')).toBe(generated);
+    });
+
+    it('auto-generated id is stable across re-renders', async () => {
+      const wrapper = mount(MonthPicker, {
+        props: { modelValue: '' },
+      });
+
+      const before = wrapper.find('.vmp-trigger').attributes('id');
+      await wrapper.setProps({ modelValue: '2025-06' });
+      expect(wrapper.find('.vmp-trigger').attributes('id')).toBe(before);
+    });
+
+    it('auto-generated ids are unique between pickers in the same app', () => {
+      const wrapper = mount({
+        render: () => h('div', [
+          h(MonthPicker, { modelValue: '' }),
+          h(MonthPicker, { modelValue: '' }),
+        ]),
+      });
+
+      const ids = wrapper.findAll('.vmp-trigger').map((t) => t.attributes('id'));
+      expect(ids[0]).toBeTruthy();
+      expect(ids[0]).not.toBe(ids[1]);
+    });
+  });
+
+  describe('spinner layout pass-through', () => {
+    it('defaults to 5 visible rows of 40px', async () => {
+      const wrapper = mount(MonthPicker, { props: { modelValue: '2025-06' } });
+
+      await wrapper.find('.vmp-trigger').trigger('click');
+      await wrapper.vm.$nextTick();
+
+      const columns = document.querySelectorAll('.vmp-spinner-column');
+      const column = columns[columns.length - 1] as HTMLElement;
+      expect(column.style.height).toBe('200px');
+      expect((column.querySelector('.vmp-spinner-item') as HTMLElement).style.height).toBe('40px');
+
+      wrapper.unmount();
+    });
+
+    it('forwards visibleCount and itemHeight to both spinner columns', async () => {
+      const wrapper = mount(MonthPicker, {
+        props: { modelValue: '2025-06', visibleCount: 3, itemHeight: 32 },
+      });
+
+      await wrapper.find('.vmp-trigger').trigger('click');
+      await wrapper.vm.$nextTick();
+
+      const columns = document.querySelectorAll('.vmp-spinner-column');
+      const yearColumn = columns[columns.length - 2] as HTMLElement;
+      const monthColumn = columns[columns.length - 1] as HTMLElement;
+
+      expect(yearColumn.style.height).toBe('96px');
+      expect(monthColumn.style.height).toBe('96px');
+      expect((monthColumn.querySelector('.vmp-spinner-item') as HTMLElement).style.height).toBe('32px');
+
+      wrapper.unmount();
     });
   });
 });

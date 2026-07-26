@@ -23,7 +23,9 @@ iOS-style drum-roll spinner month picker for Vue 3. A mobile-friendly month pick
 - 🌍 i18n support (English, Korean, Japanese built-in)
 - 📅 Min/max month constraints
 - ♿ ARIA attributes, keyboard navigation, Escape to close, focus trap
-- 🎨 CSS Custom Properties for theming
+- 🎨 CSS Custom Properties for theming + opt-in dark theme
+- 🎯 Overridable styles — global `vmp-` classes, no `!important` needed
+- 🖥️ SSR-safe (Nuxt): no hydration mismatch
 - 📦 ESM + CJS + TypeScript declarations
 - 🪶 Lightweight — no dependencies beyond Vue 3
 
@@ -170,6 +172,8 @@ app.mount('#app');
 | `locale` | `LocaleConfig` | English | Locale configuration |
 | `teleportTo` | `string` | `'body'` | Teleport target for the modal |
 | `id` | `string` | auto | HTML id for ARIA |
+| `visibleCount` | `number` | `5` | Visible rows per spinner column |
+| `itemHeight` | `number` | `40` | Spinner row height in px |
 
 ## Events
 
@@ -209,6 +213,64 @@ All visual aspects can be customized via CSS Custom Properties:
   --vmp-spinner-fade-color: #ffffff;
 }
 ```
+
+### Dark theme
+
+A dark palette ships inside `style.css` and is opt-in via a `data-vmp-theme`
+attribute. Put it on `<html>` or `<body>` — **not** on your app root: the modal
+is teleported to `body`, so an attribute on `#app` would not reach it.
+
+```html
+<html data-vmp-theme="dark">
+```
+
+```ts
+// toggling at runtime
+document.documentElement.dataset.vmpTheme = isDark ? 'dark' : '';
+```
+
+Override any variable after importing `style.css` to adjust the palette:
+
+```css
+[data-vmp-theme='dark'] {
+  --vmp-primary: #a78bfa;
+}
+```
+
+### Overriding styles
+
+Component styles are **global, not scoped** — every class is `vmp-`-prefixed and
+carries single-class specificity, so a plain two-class selector wins without
+`!important`:
+
+```css
+.my-picker .vmp-trigger {
+  border-radius: 999px;
+}
+```
+
+Import `style.css` before your own stylesheet so your rules come later in the
+cascade. Tailwind users: utilities live in `@layer utilities` and lose to
+unlayered CSS regardless of order, so reach for the important modifier
+(`!rounded-full`) or set the `--vmp-*` variables instead:
+
+```html
+<MonthPicker v-model="month" class="[--vmp-primary:#6366f1]" />
+```
+
+### Spinner dimensions
+
+```vue
+<MonthPicker v-model="month" :visible-count="3" :item-height="32" />
+```
+
+## SSR / Nuxt
+
+The component renders on the server without extra configuration. Auto-generated
+ARIA ids come from Vue's `useId()` on Vue 3.5+, so they match between server
+render and client hydration. On Vue 3.3/3.4 a module counter is used instead —
+pass an explicit `id` if you serve SSR from a long-running Node process on those
+versions.
 
 ## Built-in Locales
 
