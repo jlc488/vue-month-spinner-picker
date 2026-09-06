@@ -1,5 +1,7 @@
 # vue-month-spinner-picker
 
+[데브스랩(DevsLab)](https://devslab.kr/)의 오픈소스 프로젝트입니다.
+
 [![npm](https://img.shields.io/npm/v/vue-month-spinner-picker)](https://www.npmjs.com/package/vue-month-spinner-picker)
 [![CI](https://github.com/jlc488/vue-month-spinner-picker/actions/workflows/ci.yml/badge.svg)](https://github.com/jlc488/vue-month-spinner-picker/actions/workflows/ci.yml)
 ![Vue 3](https://img.shields.io/badge/Vue-3.3+-4FC08D?logo=vue.js&logoColor=white)
